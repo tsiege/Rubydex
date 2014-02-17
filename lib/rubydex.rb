@@ -4,8 +4,8 @@ class Rubydex
     
   end
 
-  def pokemon_retriever(info)
-    DB.execute("SELECT ? FROM pokemon")
+  def pokemon_retriever(title)
+    DB.execute("SELECT * FROM pokemon WHERE name = :title", title)
   end
 
 end

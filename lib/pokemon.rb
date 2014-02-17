@@ -10,7 +10,29 @@ class Pokemon
       (:href, :name, :number, :type, :species, :height, :weight, :description, :ascii)", pokemon_hash)
   end
 
+  def name
 
+  end
+
+  def number
+    
+  end
+
+  def type
+    
+  end
+
+  def species
+    
+  end
+
+  def height
+    
+  end
+
+  def weight
+    
+  end
 
 
 end
