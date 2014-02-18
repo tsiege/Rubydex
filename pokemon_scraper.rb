@@ -58,8 +58,9 @@ class Scraper
       pokemon_number = pokemon_hash[:number].gsub(/#/, "")
       begin
         pokemon_temp_url = @asscii_url + "#{pokemon_number}.txt"
-        pokemon_ascii = Nokogiri::HTML(open(pokemon_temp_url))
-        pokemon_hash[:ascii] = pokemon_ascii.css("p").text
+        pokemon_ascii = open(pokemon_temp_url) {|ascii| ascii.read}
+        pokemon_hash[:ascii] = pokemon_ascii
+        puts pokemon_hash[:ascii]
       rescue
         pokemon_hash[:ascii] = <<-eos
                       00000000000              

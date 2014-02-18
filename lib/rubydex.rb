@@ -1,5 +1,7 @@
 require 'sqlite3'
 require 'pry'
+
+require_relative './pokemon'
 DB = SQLite3::Database.open "pokemon.db"
 
 class RubyDex
@@ -38,15 +40,15 @@ class RubyDex
     puts "I am a knowledgeable device about 151 Pokemon."
     puts "Enter the name or number of a Pokemon you are interested in."
     puts "Or enter 'help' if you would like to see more capabilities."
-    choice = gets.chomp
+    choice = gets.chomp.downcase
     choice_reciever(choice)
   end
 
   def choice_reciever(choice)
-    if choice.downcase == "help"
+    if choice == "help"
       help
-    elsif choice.downcase == "type"
-      type_retriever
+    # elsif choice == "type"
+    #   type_retriever
     elsif choice.split("").include?('#')
       pokemon_number_retriever(choice)
     elsif (1..151).include?(choice)
@@ -58,34 +60,52 @@ class RubyDex
 
 
   def pokemon_name_retriever(choice)
-    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE name = :choice", choice)
+    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE name = ?", choice.capitalize)
     pokemon_creator(pokemon_info, choice)
   end
 
   def pokemon_number_retriever(choice)
-    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE number = :pokemon_number", pokemon_number)
+    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE number = ?", choice)
     pokemon_creator(pokemon_info, choice)
   end
 
   def pokemon_index_retriever(choice)
-    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE id = :choice", choice)
+    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE id = ?", choice)
     pokemon_creator(pokemon_info, choice)
   end
 
   def pokemon_selector(choice)
-    pokemon_instances.each do |pokemon_object|
-      if pokemon_object.name == choice
-        #pokemon_object.method_that_prints_to_screen
-      else
-        pokemon_retriever(choice)
+    if !pokemon_instances.empty?
+      pokemon_instances.each do |pokemon_object|
+        if pokemon_object.name == choice
+          pokemon_putter(choice)
+        else
+          pokemon_name_retriever(choice)
+        end
       end
+    else
+      pokemon_name_retriever(choice)
     end
+  end
+
+  def pokemon_putter(choice)
+    puts "======================================================================================="
+    puts choice.name
+    puts choice.number
+    choice.type.each {|t| print "#{t} "} 
+    puts ''
+    puts choice.species
+    puts choice.height
+    puts choice.weight
+    puts choice.description
+    puts choice.ascii
+    puts "======================================================================================="
   end
 
   def pokemon_creator(pokemon_info, choice)
     if pokemon_info != []
       choice = Pokemon.new(pokemon_info.flatten)
-      #method that prints choice to screen
+      pokemon_putter(choice)
     else
       puts "Sorry, no such records exist for this Pokemon."
       puts "Would you like to try something else?"
@@ -95,13 +115,29 @@ class RubyDex
     end
   end
 
-  def type_retriever
-    puts "Please enter a type of Pokemon."
-    choice = gets.chomp
-    pokemon_by_type = DB.execute("SELECT name, number, type FROM pokemon WHERE type = :choice", choice)
-    
-    #retrieves all instances of a certain type of pokemon
-  end
+  # def type_retriever
+  #   puts "Please enter a type of Pokemon."
+  #   choice = gets.chomp.downcase
+  #   pokemon_by_type = DB.execute("SELECT name, number, type FROM pokemon WHERE type = :choice", choice)
+  #   type_putter(pokemon_by_type)
+  # end
+
+  # def type_putter(pokemon_by_type)
+  #   if pokemon_by_type != []
+  #     puts "================================================================================"
+  #     puts ""
+  #     pokemon_by_type.each do |pokemon_array|
+  #       puts "Name: #{pokemon_array[0]} RubyDex No.: #{pokemon_array[1]} Type: #{pokemon_array[2].each {|type| prints type }}"
+  #     end
+  #     puts ""
+  #     puts "================================================================================"
+  #     puts "Is there anything else?"
+  #     choice = gets.chomp.downcase
+  #   else
+  #   puts "No such records exist."
+  #   puts "Enter 'type' if you would like to try again."
+  #   choice = gets.chomp.downcase
+  # end
 
 
 
@@ -119,5 +155,4 @@ class RubyDex
 
 end
 
-test = Rubydex.new
-binding.pry
+test = RubyDex.new
