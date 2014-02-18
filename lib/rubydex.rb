@@ -40,6 +40,7 @@ class RubyDex
     puts "I am a knowledgeable device about 151 Pokemon."
     puts "Enter the name or number of a Pokemon you are interested in."
     puts "Or enter 'help' if you would like to see more capabilities."
+    puts "If you'd like to leave enter 'exit'."
     choice = gets.chomp.downcase
     choice_reciever(choice)
   end
@@ -47,8 +48,11 @@ class RubyDex
   def choice_reciever(choice)
     if choice == "help"
       help
-    # elsif choice == "type"
-    #   type_retriever
+    elsif choice == "exit" || choice == "no"
+      puts "Go catch 'em all!"
+      exit
+    elsif choice == "type"
+      type_retriever
     elsif choice.split("").include?('#')
       pokemon_number_retriever(choice)
     elsif (1..151).include?(choice)
@@ -56,6 +60,16 @@ class RubyDex
     else
       pokemon_selector(choice)
     end
+  end
+
+  def help
+    puts "Trouble shooting your Rubydex..."
+    puts "I can tell you a Pokemon based on a number or name."
+    puts "I can show you all Pokemon of a certain type."
+    puts "Basically that's all I do..."
+    puts "If you want to get back to catching animals\nand having them fight each other enter 'exit'"
+    choice = gets.chomp.downcase
+    choice_reciever(choice)
   end
 
 
@@ -74,6 +88,19 @@ class RubyDex
     pokemon_creator(pokemon_info, choice)
   end
 
+  def pokemon_creator(pokemon_info, choice)
+    if pokemon_info != []
+      choice = Pokemon.new(pokemon_info.flatten)
+      pokemon_putter(choice)
+    else
+      puts "Sorry, no such records exist for this Pokemon."
+      puts "Would you like to try something else?"
+      puts "Enter 'help' if you need some or enter another Pokemon."
+      choice = gets.chomp.downcase
+      choice_reciever(choice)
+    end
+  end
+
   def pokemon_selector(choice)
     if !pokemon_instances.empty?
       pokemon_instances.each do |pokemon_object|
@@ -89,7 +116,8 @@ class RubyDex
   end
 
   def pokemon_putter(choice)
-    puts "======================================================================================="
+    puts "=========================================================================================================================="
+    puts choice.ascii
     puts choice.name
     puts choice.number
     choice.type.each {|t| print "#{t} "} 
@@ -98,57 +126,52 @@ class RubyDex
     puts choice.height
     puts choice.weight
     puts choice.description
-    puts choice.ascii
-    puts "======================================================================================="
+    puts "=========================================================================================================================="
+    puts "Anything else?"
+    choice = gets.chomp.downcase
+    choice_reciever(choice)
   end
 
-  def pokemon_creator(pokemon_info, choice)
-    if pokemon_info != []
-      choice = Pokemon.new(pokemon_info.flatten)
-      pokemon_putter(choice)
-    else
-      puts "Sorry, no such records exist for this Pokemon."
-      puts "Would you like to try something else?"
-      puts "Enter 'help' if you need some or enter another Pokemon."
-      choice = gets.chomp
-      choice_reciever(choice)
+
+  def type_retriever
+    puts "Please enter a type of Pokemon."
+    choice = gets.chomp.downcase
+
+    temp_pokemon_by_type = DB.execute("SELECT name, number, type FROM pokemon")
+    pokemon_by_type = temp_pokemon_by_type.collect do |pokemon_arr|
+      pokemon_arr.collect do |p| 
+        p.split(" ") 
+      end
     end
+    pokemon_type_sorter(pokemon_by_type, choice)
   end
 
-  # def type_retriever
-  #   puts "Please enter a type of Pokemon."
-  #   choice = gets.chomp.downcase
-  #   pokemon_by_type = DB.execute("SELECT name, number, type FROM pokemon WHERE type = :choice", choice)
-  #   type_putter(pokemon_by_type)
-  # end
+  def pokemon_type_sorter(pokemon_by_type, choice)
+    pokemon_of_same_type = []
+    pokemon_by_type.each do |pokemon|
+      pokemon_of_same_type << pokemon if pokemon[2].include?(choice.capitalize)
+    end
+    type_putter(pokemon_of_same_type)
+  end
 
-  # def type_putter(pokemon_by_type)
-  #   if pokemon_by_type != []
-  #     puts "================================================================================"
-  #     puts ""
-  #     pokemon_by_type.each do |pokemon_array|
-  #       puts "Name: #{pokemon_array[0]} RubyDex No.: #{pokemon_array[1]} Type: #{pokemon_array[2].each {|type| prints type }}"
-  #     end
-  #     puts ""
-  #     puts "================================================================================"
-  #     puts "Is there anything else?"
-  #     choice = gets.chomp.downcase
-  #   else
-  #   puts "No such records exist."
-  #   puts "Enter 'type' if you would like to try again."
-  #   choice = gets.chomp.downcase
-  # end
-
-
-
-  def pokedex_number(index)
-    number = index + 1
-    if number < 10
-      "#00#{number}"
-    elsif number < 100
-      "#0#{number}"
+  def type_putter(pokemon_of_same_type)
+    if pokemon_of_same_type != []
+      puts "================================================================================"
+      puts ""
+      pokemon_of_same_type.each do |pokemon_arr|
+        end_type = ", #{pokemon_arr[2][1]}" if pokemon_arr[2][1] != nil
+        puts "Name: #{pokemon_arr[0][0]}  |  RubyDex #{pokemon_arr[1][0]}  |  Type: #{pokemon_arr[2][0]}" + end_type.to_s
+      end
+      puts ""
+      puts "================================================================================"
+      puts "Is there anything else?"
+      choice = gets.chomp.downcase
+      choice_reciever(choice)
     else
-      "##{number}"
+    puts "No such records exist."
+    puts "Enter 'type' if you would like to try again."
+    choice = gets.chomp.downcase
+    choice_reciever(choice)
     end
   end
 
