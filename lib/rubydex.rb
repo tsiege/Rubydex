@@ -47,8 +47,10 @@ class RubyDex
       help
     elsif choice.downcase == "type"
       type_retriever
-    elsif (1..151).include?(choice.gsub(/#/, ""))
+    elsif choice.split("").include?('#')
       pokemon_number_retriever(choice)
+    elsif (1..151).include?(choice)
+      pokemon_index_retriever(choice)
     else
       pokemon_selector(choice)
     end
@@ -57,21 +59,17 @@ class RubyDex
 
   def pokemon_name_retriever(choice)
     pokemon_info = DB.execute("SELECT * FROM pokemon WHERE name = :choice", choice)
-    choice = Pokemon.new(pokemon_info.flatten)
-    if choice != []
-      pokemon_instances << choice
-      #pokemon_object.method_that_prints_to_screen
-    else
-      puts "Sorry, no such records exist for this Pokemon."
-      puts "Would you like to try something else?"
-      puts "Enter 'help' if you need some or enter another Pokemon."
-      choice = gets.chomp
-      choice_reciever(choice)
-    end
+    pokemon_creator(pokemon_info, choice)
   end
 
   def pokemon_number_retriever(choice)
-    #uses a number to pick a pokemon
+    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE number = :pokemon_number", pokemon_number)
+    pokemon_creator(pokemon_info, choice)
+  end
+
+  def pokemon_index_retriever(choice)
+    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE id = :choice", choice)
+    pokemon_creator(pokemon_info, choice)
   end
 
   def pokemon_selector(choice)
@@ -84,8 +82,38 @@ class RubyDex
     end
   end
 
+  def pokemon_creator(pokemon_info, choice)
+    if pokemon_info != []
+      choice = Pokemon.new(pokemon_info.flatten)
+      #method that prints choice to screen
+    else
+      puts "Sorry, no such records exist for this Pokemon."
+      puts "Would you like to try something else?"
+      puts "Enter 'help' if you need some or enter another Pokemon."
+      choice = gets.chomp
+      choice_reciever(choice)
+    end
+  end
+
   def type_retriever
+    puts "Please enter a type of Pokemon."
+    choice = gets.chomp
+    pokemon_by_type = DB.execute("SELECT name, number, type FROM pokemon WHERE type = :choice", choice)
     
+    #retrieves all instances of a certain type of pokemon
+  end
+
+
+
+  def pokedex_number(index)
+    number = index + 1
+    if number < 10
+      "#00#{number}"
+    elsif number < 100
+      "#0#{number}"
+    else
+      "##{number}"
+    end
   end
 
 
