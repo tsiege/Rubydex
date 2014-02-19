@@ -103,20 +103,6 @@ class RubyDex
     end
   end
 
-  # def pokemon_selector(choice)
-  #   if !pokemon_instances.empty?
-  #     pokemon_instances.each do |pokemon_object|
-  #       if pokemon_object.name == choice
-  #         pokemon_putter(choice)
-  #       else
-  #         pokemon_name_retriever(choice)
-  #       end
-  #     end
-  #   else
-  #     pokemon_name_retriever(choice)
-  #   end
-  # end
-
   def pokemon_putter(choice)
     puts "=========================================================================================================================="
     puts choice.ascii
