@@ -1,7 +1,3 @@
-require 'nokogiri'
-require 'open-uri'
-require 'pry'
-
 class Scraper
 
   def initialize
@@ -16,11 +12,11 @@ class Scraper
       @pokemon_data[index] ||={}
       @pokemon_data[index][:href] = element.attr("href")
       @pokemon_data[index][:name] = element.children.text
-      @pokemon_data[index][:number] = pokedex_number(index)
+      @pokemon_data[index][:number] = rubydex_number_formatter(index)
     end
   end
 
-  def pokedex_number(index)
+  def rubydex_number_formatter(index)
     number = index + 1
     if number < 10
       "#00#{number}"

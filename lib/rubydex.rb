@@ -55,12 +55,25 @@ class RubyDex
       type_retriever
     elsif choice.split("").include?('#')
       pokemon_number_retriever(choice)
-    elsif (1..151).include?(choice)
-      pokemon_index_retriever(choice)
+    elsif (1..151).include?(choice.to_i)
+      choice = rubydex_number_formater(choice)
+      pokemon_number_retriever(choice)
     else
-      pokemon_selector(choice)
+      pokemon_name_retriever(choice)
     end
   end
+
+  def rubydex_number_formater(choice)
+    choice = choice.to_i
+    if choice < 10
+      "#00#{choice}"
+    elsif choice < 100
+      "#0#{choice}"
+    else
+      "##{choice}"
+    end
+  end
+
 
   def help
     puts "Trouble shooting your Rubydex..."
@@ -83,11 +96,6 @@ class RubyDex
     pokemon_creator(pokemon_info, choice)
   end
 
-  def pokemon_index_retriever(choice)
-    pokemon_info = DB.execute("SELECT * FROM pokemon WHERE id = ?", choice)
-    pokemon_creator(pokemon_info, choice)
-  end
-
   def pokemon_creator(pokemon_info, choice)
     if pokemon_info != []
       choice = Pokemon.new(pokemon_info.flatten)
@@ -101,31 +109,32 @@ class RubyDex
     end
   end
 
-  def pokemon_selector(choice)
-    if !pokemon_instances.empty?
-      pokemon_instances.each do |pokemon_object|
-        if pokemon_object.name == choice
-          pokemon_putter(choice)
-        else
-          pokemon_name_retriever(choice)
-        end
-      end
-    else
-      pokemon_name_retriever(choice)
-    end
-  end
+  # def pokemon_selector(choice)
+  #   if !pokemon_instances.empty?
+  #     pokemon_instances.each do |pokemon_object|
+  #       if pokemon_object.name == choice
+  #         pokemon_putter(choice)
+  #       else
+  #         pokemon_name_retriever(choice)
+  #       end
+  #     end
+  #   else
+  #     pokemon_name_retriever(choice)
+  #   end
+  # end
 
   def pokemon_putter(choice)
     puts "=========================================================================================================================="
     puts choice.ascii
-    puts choice.name
-    puts choice.number
+    puts "Name:  #{choice.name}"
+    puts "No.  #{choice.number}"
+    print "Type:  "
     choice.type.each {|t| print "#{t} "} 
     puts ''
-    puts choice.species
-    puts choice.height
-    puts choice.weight
-    puts choice.description
+    puts "Species:  #{choice.species}"
+    puts "Height:  #{choice.height}"
+    puts "Weight:  #{choice.weight}"
+    puts "Description:  choice.description"
     puts "=========================================================================================================================="
     puts "Anything else?"
     choice = gets.chomp.downcase
@@ -159,8 +168,8 @@ class RubyDex
       puts "================================================================================"
       puts ""
       pokemon_of_same_type.each do |pokemon_arr|
-        end_type = ", #{pokemon_arr[2][1]}" if pokemon_arr[2][1] != nil
-        puts "Name: #{pokemon_arr[0][0]}  |  RubyDex #{pokemon_arr[1][0]}  |  Type: #{pokemon_arr[2][0]}" + end_type.to_s
+        end_type = (", #{pokemon_arr[2][1]}" if pokemon_arr[2][1] != nil).to_s
+        puts "Name: #{pokemon_arr[0][0]}  |  RubyDex #{pokemon_arr[1][0]}  |  Type: #{pokemon_arr[2][0]}" + end_type
       end
       puts ""
       puts "================================================================================"
@@ -174,8 +183,4 @@ class RubyDex
     choice_reciever(choice)
     end
   end
-
-
 end
-
-test = RubyDex.new

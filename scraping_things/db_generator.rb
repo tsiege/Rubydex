@@ -2,7 +2,7 @@ require 'sqlite3'
 require 'nokogiri'
 require 'open-uri'
 require 'pry'
-require_relative './lib/pokemon'
+require_relative './pokemon_saver'
 require_relative './pokemon_scraper'
 
 
