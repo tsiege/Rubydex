@@ -1,9 +1,3 @@
-require 'sqlite3'
-require 'pry'
-
-require_relative './pokemon'
-DB = SQLite3::Database.open "pokemon.db"
-
 class RubyDex
 
   attr_accessor :pokemon_instances

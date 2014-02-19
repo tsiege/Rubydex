@@ -1,5 +1,4 @@
 class Pokemon
-  attr_accessor :name, :number, :type, :species, :height, :weight, :description, :ascii
   attr_reader :pokemon_hash
 
   def initialize(pokemon_hash)
