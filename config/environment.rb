@@ -1,5 +1,6 @@
-require 'sqlite3'
-require 'pry'
+require 'bundler/setup'
+
+Bundler.require(:default)
 
 require_relative '../lib/pokemon'
 require_relative '../lib/rubydex'

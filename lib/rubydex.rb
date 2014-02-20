@@ -114,7 +114,7 @@ class RubyDex
     puts "Species:  #{choice.species}"
     puts "Height:  #{choice.height}"
     puts "Weight:  #{choice.weight}"
-    puts "Description:  choice.description"
+    puts "Description:  #{choice.description}"
     puts "=========================================================================================================================="
     puts "Anything else?"
     choice = gets.chomp.downcase
