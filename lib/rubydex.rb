@@ -52,6 +52,9 @@ class RubyDex
     elsif (1..151).include?(choice.to_i)
       choice = rubydex_number_formater(choice)
       pokemon_number_retriever(choice)
+    elsif choice == 'random'
+      choice = rubydex_number_formater(rand(1..151))
+      pokemon_number_retriever(choice)
     else
       pokemon_name_retriever(choice)
     end
