@@ -44,7 +44,6 @@ class Scraper
     pokemon_hash[:species] = pokemon_page_data[2].text
     pokemon_hash[:height] = pokemon_page_data[3].text
     pokemon_hash[:weight] = pokemon_page_data[4].text
-    # pokemon_hash[:ability] = pokemon_page_data
     pokemon_hash[:description] = pokemon_page_tables[4].css("td")[0].text
   end
 
